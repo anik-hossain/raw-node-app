@@ -4,7 +4,9 @@
   "description": "RestFull API to monitor up or down time of user provided links",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon node index.js",
+    "dev": "nodemon -L index.js "
   },
   "repository": {
     "type": "git",
