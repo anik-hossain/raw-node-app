@@ -1,0 +1,28 @@
+{
+  "name": "raw-node-app",
+  "version": "1.0.0",
+  "description": "RestFull API to monitor up or down time of user provided links",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anik-hossain/raw-node-app.git"
+  },
+  "keywords": [
+    "NodeJS",
+    "Raw",
+    "Node",
+    "App"
+  ],
+  "author": "Anik Hossain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anik-hossain/raw-node-app/issues"
+  },
+  "homepage": "https://github.com/anik-hossain/raw-node-app#readme",
+  "dependencies": {
+    "npm": "^7.19.1"
+  }
+}
