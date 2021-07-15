@@ -7,26 +7,31 @@
 
 // Dependencies
 const http = require('http');
+const envToExoport = require('./helpers/env');
 
 // Custom Dependencies
 const { handlerReqRes } = require('./helpers/handler');
+const data = require('./lib/data');
 
 // App Obeject Scaffolding
-const app = {}
+const app = {};
+
+data.delete('', 'new', (err, data) => {
+    console.log(err, data);
+});
 
 // Configuration
 app.config = {
-    port: 3000
-}
+    port: 3000,
+};
 
 // Create Server
 app.creaeteServer = () => {
     const server = http.createServer(app.handlerReqRes);
-    server.listen(app.config.port, () => {
-
-        console.log(`server started on port ${app.config.port}`);
+    server.listen(envToExoport.port, () => {
+        console.log(`server started on port ${envToExoport.port}`);
     });
-}
+};
 
 // Request Response Handler
 app.handlerReqRes = handlerReqRes;

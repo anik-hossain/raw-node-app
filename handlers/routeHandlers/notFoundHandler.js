@@ -6,13 +6,13 @@
  */
 
 // Modile Scalffolding
-const handler = {}
+const handler = {};
 
 handler.notFound = (requestProperties, clbk) => {
     console.log(requestProperties);
     clbk(404, {
-        message: '404 Not Found'
+        message: '404 Not Found',
     });
-}
+};
 
 module.exports = handler;
