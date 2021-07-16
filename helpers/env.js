@@ -1,7 +1,7 @@
 /**
  *
  * Title: Environments
- * Description: Environments srtup
+ * Description: Environments setup
  * Author: Anik Hossain
  * Date: 7/14/2021
  *
@@ -11,23 +11,25 @@
 const environments = {};
 
 environments.development = {
-  envName: "development",
-  port: 3000,
+    envName: 'development',
+    port: 3000,
+    secretKey: 'kjfddeijfdksjfdjsfkjfjdksfj',
 };
 
 environments.production = {
-  envName: "production",
-  port: 4000,
+    envName: 'production',
+    port: 4000,
+    secretKey: 'akljfdajsfkjadsfdlksdjffds',
 };
 
 // Get which env was passed
 const currentEnv =
-  typeof process.env.NODE_ENV === "string" ? process.env.NODE_ENV : "string";
+    typeof process.env.NODE_ENV === 'string' ? process.env.NODE_ENV : 'string';
 
 // Export corresponding environment object
 const envToExoport =
-  typeof environments[currentEnv] === "object"
-    ? environments[currentEnv]
-    : environments.development;
+    typeof environments[currentEnv] === 'object'
+        ? environments[currentEnv]
+        : environments.development;
 
 module.exports = envToExoport;

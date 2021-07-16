@@ -16,10 +16,6 @@ const data = require('./lib/data');
 // App Obeject Scaffolding
 const app = {};
 
-data.delete('', 'new', (err, data) => {
-    console.log(err, data);
-});
-
 // Configuration
 app.config = {
     port: 3000,

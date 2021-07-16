@@ -6,59 +6,61 @@
  */
 
 // Dependencies
-const url = require("url");
-const { StringDecoder } = require("string_decoder");
-const routes = require("../routes");
-const { notFound } = require("../handlers/routeHandlers/notFoundHandler");
+const url = require('url');
+const { StringDecoder } = require('string_decoder');
+const routes = require('../routes');
+const { notFound } = require('../handlers/routeHandlers/notFoundHandler');
+const { parseJSON } = require('../helpers/utilities');
 
 // Module Scaffolding
 const handler = {};
 
 // Request Response Handler
 handler.handlerReqRes = (req, res) => {
-  // Get the url and parse it
-  const parsedUrl = url.parse(req.url, true);
-  const path = parsedUrl.pathname;
-  const trimmedUrl = path.replace(/^\/+|\/+$/g, "");
-  const method = req.method.toLowerCase();
-  const queryString = parsedUrl.query;
-  const headers = req.headers;
+    // Get the url and parse it
+    const parsedUrl = url.parse(req.url, true);
+    const path = parsedUrl.pathname;
+    const trimmedUrl = path.replace(/^\/+|\/+$/g, '');
+    const method = req.method.toLowerCase();
+    const queryString = parsedUrl.query;
+    const headers = req.headers;
 
-  const decoder = new StringDecoder("utf-8");
-  let data = "";
+    const decoder = new StringDecoder('utf-8');
+    let data = '';
 
-  const requestProperties = {
-    parsedUrl,
-    path,
-    trimmedUrl,
-    method,
-    queryString,
-    headers,
-  };
+    const requestProperties = {
+        parsedUrl,
+        path,
+        trimmedUrl,
+        method,
+        queryString,
+        headers,
+    };
 
-  // Get request handler
-  const getHandler = routes[trimmedUrl] ? routes[trimmedUrl] : notFound;
+    // Get request handler
+    const getHandler = routes[trimmedUrl] ? routes[trimmedUrl] : notFound;
 
-  getHandler(requestProperties, (statusCode, payload) => {
-    statusCode = typeof statusCode === "number" ? statusCode : 500;
-    payload = typeof payload === "object" ? payload : {};
+    req.on('data', (buffer) => {
+        data += decoder.write(buffer);
+    });
 
-    const payloadString = JSON.stringify(payload);
+    req.on('end', () => {
+        data += decoder.end();
+        requestProperties.body = parseJSON(data);
 
-    // Return the response
-    res.writeHead(statusCode);
-    res.end(payloadString);
-  });
+        getHandler(requestProperties, (statusCode, payload) => {
+            statusCode = typeof statusCode === 'number' ? statusCode : 500;
+            payload = typeof payload === 'object' ? payload : {};
 
-  req.on("data", (buffer) => {
-    data += decoder.write(buffer);
-  });
+            const payloadString = JSON.stringify(payload);
 
-  req.on("end", () => {
-    data += decoder.end();
-
-    console.log(data);
-  });
+            // Return the response
+            res.setHeader('Content-Type', 'aplication/json');
+            res.writeHead(statusCode);
+            res.end(payloadString);
+        });
+        // console.log(data);
+    });
 };
 
 module.exports = handler;
