@@ -38,4 +38,22 @@ utilities.hash = function (str) {
     return false;
 };
 
+// Create random token
+utilities.randomToken = (strLength = 0) => {
+    let output = '';
+
+    let length = typeof strLength === 'number' && strLength ? strLength : false;
+    if (length) {
+        let characters = 'abcdefghijklmnopqrstuvwxyz1234567890';
+        for (let i = 0; i <= length; i++) {
+            let randomChar = characters.charAt(
+                Math.floor(Math.random() * characters.length + 1)
+            );
+            output += randomChar;
+        }
+        return output;
+    }
+    return false;
+};
+
 module.exports = utilities;

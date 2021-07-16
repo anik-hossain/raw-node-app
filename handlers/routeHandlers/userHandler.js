@@ -9,6 +9,7 @@
 const { read, create, update } = require('../../lib/data');
 const data = require('../../lib/data');
 const { hash, parseJSON } = require('../../helpers/utilities');
+const tokenHandler = require('./tokenHandler');
 
 // Modile Scalffolding
 const handler = {};
@@ -33,14 +34,26 @@ handler._users.get = (requestProperties, clbk) => {
             ? requestProperties.queryString.phone
             : false;
     if (phone) {
-        // Find the user
-        read('users', phone, (err, data) => {
-            const user = { ...parseJSON(data) };
-            if (!err && user) {
-                delete user.password;
-                clbk(200, user);
+        // Verify token
+        const token =
+            typeof requestProperties.headers.token === 'string'
+                ? requestProperties.headers.token
+                : false;
+
+        tokenHandler._token.verify(token, phone, (token) => {
+            if (token) {
+                // Find the user
+                read('users', phone, (err, data) => {
+                    const user = { ...parseJSON(data) };
+                    if (!err && user) {
+                        delete user.password;
+                        clbk(200, user);
+                    } else {
+                        clbk(404, { error: '404 not found' });
+                    }
+                });
             } else {
-                clbk(404, { error: '404 not found' });
+                clbk(403, { error: 'Authenticaion failled' });
             }
         });
     } else {
@@ -133,29 +146,43 @@ handler._users.put = (requestProperties, clbk) => {
 
     if (phone) {
         if (firstName || lastName || password) {
-            // Find the user
-            read('users', phone, (err, data) => {
-                const userData = { ...parseJSON(data) };
-                if (!err) {
-                    if (firstName) {
-                        userData.firstName = firstName;
-                    }
-                    if (lastName) {
-                        userData.lastName = lastName;
-                    }
-                    if (password) {
-                        userData.password = hash(password);
-                    }
-                    // Update user
-                    update('users', phone, userData, (err) => {
+            // Verify token
+            const token =
+                typeof requestProperties.headers.token === 'string'
+                    ? requestProperties.headers.token
+                    : false;
+
+            tokenHandler._token.verify(token, phone, (token) => {
+                if (token) {
+                    // Find the user
+                    read('users', phone, (err, data) => {
+                        const userData = { ...parseJSON(data) };
                         if (!err) {
-                            clbk(200, { message: 'User Upadate Successfully' });
+                            if (firstName) {
+                                userData.firstName = firstName;
+                            }
+                            if (lastName) {
+                                userData.lastName = lastName;
+                            }
+                            if (password) {
+                                userData.password = hash(password);
+                            }
+                            // Update user
+                            update('users', phone, userData, (err) => {
+                                if (!err) {
+                                    clbk(200, {
+                                        message: 'User Upadate Successfully',
+                                    });
+                                } else {
+                                    clbk(500, { error: 'Server side error' });
+                                }
+                            });
                         } else {
-                            clbk(500, { error: 'Server side error' });
+                            clbk(400, { error: 'Invalid phone number' });
                         }
                     });
                 } else {
-                    clbk(400, { error: 'Invalid phone number' });
+                    clbk(403, { error: 'Authenticaion failled' });
                 }
             });
         } else {
@@ -173,18 +200,30 @@ handler._users.delete = (requestProperties, clbk) => {
             ? requestProperties.queryString.phone
             : false;
     if (phone) {
-        // Find the user
-        read('users', phone, (err) => {
-            if (!err) {
-                data.delete('users', phone, (err) => {
+        // Verify token
+        const token =
+            typeof requestProperties.headers.token === 'string'
+                ? requestProperties.headers.token
+                : false;
+
+        tokenHandler._token.verify(token, phone, (token) => {
+            if (token) {
+                // Find the user
+                read('users', phone, (err) => {
                     if (!err) {
-                        clbk(200, 'User deleted successfully');
+                        data.delete('users', phone, (err) => {
+                            if (!err) {
+                                clbk(200, 'User deleted successfully');
+                            } else {
+                                clbk(500, { error: 'Server side error' });
+                            }
+                        });
                     } else {
-                        clbk(500, { error: 'Server side error' });
+                        clbk(500, { message: 'Server side error' });
                     }
                 });
             } else {
-                clbk(500, { message: 'Server side error' });
+                clbk(403, { error: 'Authenticaion failled' });
             }
         });
     } else {
