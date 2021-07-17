@@ -14,12 +14,14 @@ environments.development = {
     envName: 'development',
     port: 3000,
     secretKey: 'kjfddeijfdksjfdjsfkjfjdksfj',
+    maxChecks: 5,
 };
 
 environments.production = {
     envName: 'production',
     port: 4000,
     secretKey: 'akljfdajsfkjadsfdlksdjffds',
+    maxChecks: 5,
 };
 
 // Get which env was passed

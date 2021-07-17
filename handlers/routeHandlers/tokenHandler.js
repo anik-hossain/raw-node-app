@@ -22,7 +22,7 @@ handler.tokenHandler = (requestProperties, clbk) => {
     }
 };
 
-// User Scaffolding
+// Token Scaffolding
 handler._token = {};
 
 handler._token.get = (requestProperties, clbk) => {
@@ -31,7 +31,7 @@ handler._token.get = (requestProperties, clbk) => {
             ? requestProperties.queryString.token
             : false;
     if (token) {
-        // Find the user
+        // Find the Token
         read('tokens', token, (err, data) => {
             const token = { ...parseJSON(data) };
             if (!err && token) {
@@ -58,7 +58,7 @@ handler._token.post = (requestProperties, clbk) => {
             ? requestProperties.body.password
             : false;
     if (phone && password) {
-        // Find the use
+        // Find the user
         read('users', phone, (err, data) => {
             if (hash(password) === parseJSON(data).password) {
                 const token = randomToken(20);
@@ -129,7 +129,7 @@ handler._token.delete = (requestProperties, clbk) => {
             ? requestProperties.queryString.token
             : false;
     if (token) {
-        // Find the user
+        // Find the token
         read('tokens', token, (err) => {
             if (!err) {
                 data.delete('tokens', token, (err) => {
